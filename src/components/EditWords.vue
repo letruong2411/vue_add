@@ -7,15 +7,6 @@
     </form> -->
 
     <el-dialog title="Tips" :visible.sync="dialogVisible" width="30%">
-      <el-tag
-        :key="tag"
-        v-for="tag in dynamicTags"
-        closable
-        :disable-transitions="false"
-        @close="handleCloseTag(tag)"
-      >
-        {{ tag }}
-      </el-tag>
       <el-input
         class="input-new-tag"
         v-if="inputVisible"
@@ -25,9 +16,6 @@
         @keyup.enter.native="handleInputConfirm"
       >
       </el-input>
-      <el-button v-else class="button-new-tag" size="small" @click="showInput"
-        >+ New Tag</el-button
-      >
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">Cancel</el-button>
@@ -43,19 +31,17 @@ const dataForm = {
   name: null,
 };
 export default {
-  name: "HelloWorld",
+  name: "EditWords",
   props: {
-    msg: String,
     data: {
       type: Array,
       required: false,
       default: () => [],
     },
-    dialogVisible: Boolean,
+    dialogVisibleEdit: Boolean,
   },
   data() {
     return {
-      dynamicTags: [],
       inputVisible: false,
       dataForm: { ...dataForm },
     };
@@ -65,40 +51,12 @@ export default {
       let check = false;
       this.$emit("handleClose", check);
     },
-    handleCloseTag(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-    },
 
     showInput() {
       this.inputVisible = true;
       this.$nextTick(() => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
-    },
-
-    handleInputConfirm() {
-      let inputValue = this.dataForm.name;
-      let isDuplicate = false;
-      let checkDuplicateData = this.data.filter(
-        (dataItem) => inputValue === dataItem.name
-      );
-      let checkDuplicateInputValue = this.dynamicTags.filter(
-        (tag) => inputValue === tag
-      );
-      if (
-        checkDuplicateData.length > 0 ||
-        checkDuplicateInputValue.length > 0
-      ) {
-        isDuplicate = true;
-      }
-      if (inputValue && !isDuplicate) {
-        this.dynamicTags.push(inputValue);
-      } else {
-        return alert("duplicate inputvalue");
-      }
-      this.inputVisible = false;
-      this.dataForm.name = null;
-      this.inputValue = null;
     },
 
     onSubmit(e) {
@@ -109,7 +67,7 @@ export default {
       //   name: this.dataForm.name
       // })
       this.dataForm.id = id;
-      this.$emit("addData", this.dynamicTags);
+      this.$emit("editData", this.dynamicTags);
       this.dataForm = { ...dataForm };
       this.dynamicTags = [];
       this.dataForm.name = null;
